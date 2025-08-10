@@ -32,6 +32,11 @@ namespace MKit.Math
         {
             Gizmos.DrawLine( line.Origin - line.Direction * LINE_LENGTH * .5f, line.Origin + line.Direction * LINE_LENGTH * .5f );
         }
+
+        public static void DrawGizmo( this LineSegment segment )
+        {
+            Gizmos.DrawLine( segment.PointA, segment._pointB );
+        }
     }
 
 }

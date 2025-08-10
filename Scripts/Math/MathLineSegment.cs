@@ -11,9 +11,9 @@ namespace MKit.Math
 
         public static Vector3 Project( this LineSegment line, Vector3 vector )
         {
-            float dirMagSq = line.Direction.sqrMagnitude;
-            float proj = vector.Dot( line.Direction );
-            return ( proj / dirMagSq ) * line.Direction;
+            float dirMagSq = line._direction.sqrMagnitude;
+            float proj = vector.Dot( line._direction );
+            return ( proj / dirMagSq ) * line._direction;
         }
 
 
@@ -25,7 +25,7 @@ namespace MKit.Math
 
         public static float DistanceSquared( this LineSegment segment, Vector3 point )
         {
-            Vector3 v = segment.PointB - segment.PointA;
+            Vector3 v = segment._pointB - segment.PointA;
             Vector3 w = point - segment.PointA;
             float proj = w.Dot( v );
 
@@ -56,8 +56,8 @@ namespace MKit.Math
 
         public static float DistanceSquared( this LineSegment segment0, LineSegment segment1, out float s_c, out float t_c)
         {
-            Vector3 v0 = segment0.PointB - segment0.PointA;
-            Vector3 v1 = segment1.PointB - segment1.PointA;
+            Vector3 v0 = segment0._pointB - segment0.PointA;
+            Vector3 v1 = segment1._pointB - segment1.PointA;
 
             Vector3 w0 = segment0.PointA - segment1.PointA;
             float a = v0.sqrMagnitude;
@@ -154,11 +154,11 @@ namespace MKit.Math
 
         public static void ClosestPoints( this LineSegment segment0, LineSegment segment1, out Vector3 closest1, out Vector3 closest0 )
         {
-            Vector3 v0 = segment0.PointB - segment0.PointA;
-            Vector3 v1 = segment1.PointB - segment1.PointA;
+            Vector3 v0 = segment0._pointB - segment0.PointA;
+            Vector3 v1 = segment1._pointB - segment1.PointA;
 
             // compute intermediate parameters
-            Vector3 w0 = segment0.PointA - segment1.PointB;
+            Vector3 w0 = segment0.PointA - segment1._pointB;
             float a = v0.sqrMagnitude;
             float b = v0.Dot( v1 );
             float c = v1.sqrMagnitude;
@@ -252,15 +252,15 @@ namespace MKit.Math
         }
 
 
-        public static void ClosestPoints( LineSegment segment, Line line, out Vector3 closestSegment, out Vector3 closestLine )
+        public static void ClosestPoints( this LineSegment segment, Line line, out Vector3 closestSegment, out Vector3 closestLine )
         {
-            Vector3 sV = segment.PointB - segment.PointA;
+            Vector3 sV = segment._pointB - segment.PointA;
             // compute intermediate parameters
             Vector3 w0 = segment.PointA - line.Origin;
             float a = sV.sqrMagnitude;
             float b = sV.Dot( line.Direction );
             float c = line.Direction.sqrMagnitude;
-            float d = segment.Direction.Dot( w0 );
+            float d = segment._direction.Dot( w0 );
             float e = line.Direction.Dot( w0 );
 
             float denom = a * c - b * b;
@@ -300,7 +300,7 @@ namespace MKit.Math
                 }
 
                 // compute closest points
-                closestSegment = segment.PointA + s_c * segment.Direction;
+                closestSegment = segment.PointA + s_c * segment._direction;
                 closestLine = line.Origin + t_c * line.Direction;
             }
 
@@ -309,7 +309,7 @@ namespace MKit.Math
 
         public static Vector3 ClosestPoint( this LineSegment segment, Vector3 point )
         {
-            Vector3 v = segment.PointB - segment.PointA;
+            Vector3 v = segment._pointB - segment.PointA;
             Vector3 w = point - segment.PointA;
             float proj = w.Dot( v );
 
@@ -322,7 +322,7 @@ namespace MKit.Math
                 float vSq = v.sqrMagnitude;
                 if( proj >= vSq )
                 {
-                    return segment.PointB;
+                    return segment._pointB;
                 }
                 else
                 {

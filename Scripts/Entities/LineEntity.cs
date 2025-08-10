@@ -25,7 +25,7 @@ namespace MKit.Math
 
 
     [ExecuteAlways]
-    public class LineEntity : MonoBehaviour
+    public class LineEntity : Entity
     {
         
         public Line Line;
@@ -45,6 +45,12 @@ namespace MKit.Math
 
             if( _rotation.Update( transform.rotation.eulerAngles ) )
                 RefreshLine();
+        }
+
+
+        public override IMathConstruct GetConstruct()
+        {
+            return Line;
         }
 
         private void RefreshLine()

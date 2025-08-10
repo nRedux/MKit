@@ -1,21 +1,27 @@
 using System;
 using UnityEngine;
-using MKit.Tests;
 
 namespace MKit.Math
 {
 
     [Serializable]
-    public struct LineSegment
+    public struct LineSegment: IMathConstruct
     {
-        public readonly Vector3 PointA;
-        public readonly Vector3 PointB;
-        public readonly Vector3 Direction;
+        public Vector3 _pointA;
+        public Vector3 _pointB;
+        public Vector3 _direction;
+
+
+        public Vector3 PointA => _pointA;
+        public Vector3 PointB => _pointA;
+        public Vector3 Direction => _direction;
+
+
         public LineSegment( Vector3 pointA, Vector3 pointB )
         {
-            this.PointA = pointA;
-            this.PointB = pointB;
-            this.Direction = pointB - pointA;
+            this._pointA = pointA;
+            this._pointB = pointB;
+            this._direction = pointB - pointA;
         }
     }
 

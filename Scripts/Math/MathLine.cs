@@ -80,10 +80,10 @@ namespace MKit.Math
         {
             // compute intermediate parameters
             Vector3 w0 = segment.PointA - line.Origin;
-            float a = segment.Direction.sqrMagnitude;
-            float b = segment.Direction.Dot( line.Direction );
+            float a = segment._direction.sqrMagnitude;
+            float b = segment._direction.Dot( line.Direction );
             float c = line.Direction.sqrMagnitude;
-            float d = segment.Direction.Dot( w0 );
+            float d = segment._direction.Dot( w0 );
             float e = line.Direction.Dot( w0 );
 
             float denom = a * c - b * b;
@@ -125,7 +125,7 @@ namespace MKit.Math
                 }
 
                 // compute difference vector and distance squared
-                Vector3 wc = w0 + s_c * segment.Direction - t_c * line.Direction;
+                Vector3 wc = w0 + s_c * segment._direction - t_c * line.Direction;
                 return wc.sqrMagnitude;
             }
 
@@ -158,13 +158,13 @@ namespace MKit.Math
 
         public static void ClosestPoints( LineSegment segment, Line line, out Vector3 closestSegment, out Vector3 closestLine )
         {
-            Vector3 sV = segment.PointB - segment.PointA;
+            Vector3 sV = segment._pointB - segment.PointA;
             // compute intermediate parameters
             Vector3 w0 = segment.PointA - line.Origin;
             float a = sV.sqrMagnitude;
             float b = sV.Dot( line.Direction );
             float c = line.Direction.sqrMagnitude;
-            float d = segment.Direction.Dot( w0 );
+            float d = segment._direction.Dot( w0 );
             float e = line.Direction.Dot( w0 );
 
             float denom = a * c - b * b;
@@ -204,7 +204,7 @@ namespace MKit.Math
                 }
 
                 // compute closest points
-                closestSegment = segment.PointA + s_c * segment.Direction;
+                closestSegment = segment.PointA + s_c * segment._direction;
                 closestLine = line.Origin + t_c * line.Direction;
             }
 

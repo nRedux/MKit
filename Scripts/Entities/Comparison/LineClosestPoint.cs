@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace MKit.Math.Entities
 {
-
     public class LineClosestPoint : MonoBehaviour
     {
         public PointEntity a;
@@ -26,7 +25,7 @@ namespace MKit.Math.Entities
             if( Display == 0 )
                 return;
 
-            Vector3 testA = a.Position;
+            Vector3 testA = a.Point.Position;
             Line testB = b.Line;
 
             Vector3 closestOnLine = testB.ClosestPoint( testA );
@@ -40,14 +39,16 @@ namespace MKit.Math.Entities
 
             if( DisplayFlagSet( Display, ClosestPointMode.Distance ) )
             {
-                float distance = testB.Distance( a.Position );
-                Handles.Label( closestOnLine + ( a.Position - closestOnLine ) * .5f, distance.ToString( "N4" ) );
+                float distance = testB.DistanceSquared( a.Point.Position );
+                Handles.Label( closestOnLine + ( closestOnLine - a.Point.Position ) * .5f, distance.ToString( "N4" ) );
             }
 
             GizmosEx.PushColor( Color.blue );
-            Gizmos.DrawLine( closestOnLine, a.Position );
+            Gizmos.DrawLine( closestOnLine, a.Point.Position );
             GizmosEx.PopColor();
 
         }
+
     }
+
 }

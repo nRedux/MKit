@@ -7,9 +7,9 @@ namespace MKit.Math
     [Serializable]
     public struct LineSegment: IMathConstruct
     {
-        public Vector3 _pointA;
-        public Vector3 _pointB;
-        public Vector3 _direction;
+        private Vector3 _pointA;
+        private Vector3 _pointB;
+        private Vector3 _direction;
 
 
         public Vector3 PointA => _pointA;

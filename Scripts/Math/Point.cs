@@ -13,4 +13,10 @@ public struct Point: IMathConstruct
     {
         this._position = components;
     }
+
+
+    public static implicit operator Vector3(Point point )
+    {
+        return point.Position;
+    }
 }

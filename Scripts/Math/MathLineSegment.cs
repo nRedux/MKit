@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using MKit.Math;
 using UnityEngine;
 
@@ -9,43 +9,15 @@ namespace MKit.Math
     public static partial class MathLineSegment
     {
 
-        public static Vector3 Project( this LineSegment line, Vector3 vector )
-        {
-            float dirMagSq = line._direction.sqrMagnitude;
-            float proj = vector.Dot( line._direction );
-            return ( proj / dirMagSq ) * line._direction;
-        }
 
 
         public static float Distance( this LineSegment segment, Vector3 point )
         {
-            return MathF.Sqrt( segment.DistanceSquared( point ) );
+            return Mathf.Sqrt( segment.DistanceSquared( point ) );
         }
 
 
-        public static float DistanceSquared( this LineSegment segment, Vector3 point )
-        {
-            Vector3 v = segment._pointB - segment.PointA;
-            Vector3 w = point - segment.PointA;
-            float proj = w.Dot( v );
 
-            if( proj < 0f )
-            {
-                return w.sqrMagnitude;
-            }
-            else
-            {
-                float vSq = v.sqrMagnitude;
-                if( proj >= vSq)
-                {
-                    return w.sqrMagnitude - 2f * proj + vSq;
-                }
-                else
-                {
-                    return w.sqrMagnitude - proj * proj / vSq;
-                }
-            }
-        }
 
 
         public static float DistanceSquared( this LineSegment segment, Line line )
@@ -54,10 +26,16 @@ namespace MKit.Math
         }
 
 
-        public static float DistanceSquared( this LineSegment segment0, LineSegment segment1, out float s_c, out float t_c)
+        public static float DistanceSquared( this LineSegment segment, Ray ray )
         {
-            Vector3 v0 = segment0._pointB - segment0.PointA;
-            Vector3 v1 = segment1._pointB - segment1.PointA;
+            return ray.DistanceSquared( segment );
+        }
+
+
+        public static float DistanceSquared( this LineSegment segment0, LineSegment segment1 )
+        {
+            Vector3 v0 = segment0.PointA - segment0.PointA;
+            Vector3 v1 = segment1.PointB - segment1.PointA;
 
             Vector3 w0 = segment0.PointA - segment1.PointA;
             float a = v0.sqrMagnitude;
@@ -69,7 +47,7 @@ namespace MKit.Math
             float denom = a * c - b * b;
             // parameters to compute s_c, t_c
             float sn, sd, tn, td;
-
+            float s_c, t_c;
             // if denom is zero, try finding closest point on segment1 to origin0
             if( Mathf.Approximately( denom, 0f ) )
             {
@@ -152,18 +130,46 @@ namespace MKit.Math
         }
 
 
-        public static void ClosestPoints( this LineSegment segment0, LineSegment segment1, out Vector3 closest1, out Vector3 closest0 )
+        public static float DistanceSquared( this LineSegment segment, Vector3 point )
         {
-            Vector3 v0 = segment0._pointB - segment0.PointA;
-            Vector3 v1 = segment1._pointB - segment1.PointA;
+            Vector3 v = segment.PointB - segment.PointA;
+            Vector3 w = point - segment.PointA;
+            float proj = w.Dot( v );
 
+            if( proj < 0f )
+            {
+                return w.sqrMagnitude;
+            }
+            else
+            {
+                float vSq = v.sqrMagnitude;
+                if( proj >= vSq )
+                {
+                    return w.sqrMagnitude - 2f * proj + vSq;
+                }
+                else
+                {
+                    return w.sqrMagnitude - proj * proj / vSq;
+                }
+            }
+        }
+
+
+        public static void ClosestPoints( this LineSegment segment, Ray ray, out Vector3 closest0, out Vector3 closest1 )
+        {
+            ray.ClosestPoints( segment, out closest0, out closest1 );
+        }
+
+
+        public static void ClosestPoints( this LineSegment segment0, LineSegment segment1, out Vector3 closest0, out Vector3 closest1 )
+        {
             // compute intermediate parameters
-            Vector3 w0 = segment0.PointA - segment1._pointB;
-            float a = v0.sqrMagnitude;
-            float b = v0.Dot( v1 );
-            float c = v1.sqrMagnitude;
-            float d = v0.Dot( w0 );
-            float e = v1.Dot( w0 );
+            Vector3 w0 = segment0.PointA - segment1.PointB;
+            float a = segment0.Direction.sqrMagnitude;
+            float b = segment0.Direction.Dot( segment1.Direction );
+            float c = segment1.Direction.sqrMagnitude;
+            float d = segment0.Direction.Dot( w0 );
+            float e = segment1.Direction.Dot( w0 );
 
             float denom = a * c - b * b;
             // parameters to compute s_c, t_c
@@ -171,7 +177,7 @@ namespace MKit.Math
             float sn, sd, tn, td;
 
             // if denom is zero, try finding closest point on segment1 to origin0
-            if( Mathf.Approximately( denom, 0 ) )
+            if( Mathf.Approximately( denom, 0f ) )
             {
                 // clamp s_c to 0
                 sd = td = c;
@@ -247,20 +253,20 @@ namespace MKit.Math
             }
 
             // compute closest points
-            closest0 = segment0.PointA + s_c * v0;
-            closest1 = segment1.PointA + t_c * v1;
+            closest0 = segment0.PointA + s_c * segment0.Direction;
+            closest1 = segment1.PointA + t_c * segment1.Direction;
         }
 
 
         public static void ClosestPoints( this LineSegment segment, Line line, out Vector3 closestSegment, out Vector3 closestLine )
         {
-            Vector3 sV = segment._pointB - segment.PointA;
+            Vector3 sV = segment.PointB - segment.PointA;
             // compute intermediate parameters
             Vector3 w0 = segment.PointA - line.Origin;
             float a = sV.sqrMagnitude;
             float b = sV.Dot( line.Direction );
             float c = line.Direction.sqrMagnitude;
-            float d = segment._direction.Dot( w0 );
+            float d = segment.Direction.Dot( w0 );
             float e = line.Direction.Dot( w0 );
 
             float denom = a * c - b * b;
@@ -300,33 +306,33 @@ namespace MKit.Math
                 }
 
                 // compute closest points
-                closestSegment = segment.PointA + s_c * segment._direction;
+                closestSegment = segment.PointA + s_c * segment.Direction;
                 closestLine = line.Origin + t_c * line.Direction;
             }
 
         }
 
 
-        public static Vector3 ClosestPoint( this LineSegment segment, Vector3 point )
+        public static void ClosestPoints( this LineSegment segment, Vector3 point, out Vector3 closest0, out Vector3 closest1 )
         {
-            Vector3 v = segment._pointB - segment.PointA;
+            Vector3 v = segment.PointB - segment.PointA;
             Vector3 w = point - segment.PointA;
             float proj = w.Dot( v );
-
+            closest1 = point;
             if( proj < 0f )
             {
-                return segment.PointA;
+                closest0 = segment.PointA;
             }
             else
             {
                 float vSq = v.sqrMagnitude;
                 if( proj >= vSq )
                 {
-                    return segment._pointB;
+                    closest0 = segment.PointB;
                 }
                 else
                 {
-                    return segment.PointA + ( proj / vSq ) * v;
+                    closest0 = segment.PointA + ( proj / vSq ) * v;
                 }
             }
         }

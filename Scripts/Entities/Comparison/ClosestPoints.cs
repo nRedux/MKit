@@ -16,6 +16,9 @@ namespace MKit.Math.Entities
 
     public class ClosestPoints : MonoBehaviour
     {
+
+        private const float ENDPOINT_SIZE = .5f;
+
         public Entity a;
         public Entity b;
 
@@ -46,8 +49,8 @@ namespace MKit.Math.Entities
             if( DisplayFlagSet( Display, ClosestPointMode.ClosestPoint ) )
             {
                 GizmosEx.PushColor( Color.red );
-                Gizmos.DrawWireSphere( closestToA, .1f );
-                Gizmos.DrawWireSphere( closestToB, .1f );
+                Gizmos.DrawWireSphere( closestToA, ENDPOINT_SIZE );
+                Gizmos.DrawWireSphere( closestToB, ENDPOINT_SIZE );
                 GizmosEx.PopColor();
             }
 
@@ -78,16 +81,40 @@ namespace MKit.Math.Entities
             }
             else if( a is Line lineAndPointA && b is Point lineAndPointB )
             {
-                closestA = lineAndPointA.ClosestPoint( lineAndPointB.Position );
-                closestB = lineAndPointB.Position;
+                lineAndPointA.ClosestPoints( lineAndPointB.Position, out closestA, out closestB );
                 return true;
             }
             else if( a is LineSegment lineSegAndPointA && b is Point lineSegAndPointB )
             {
-                closestA = lineSegAndPointA.ClosestPoint( lineSegAndPointB.Position );
-                closestB = lineSegAndPointB.Position;
+                lineSegAndPointA.ClosestPoints( lineSegAndPointB, out closestA, out closestB  );
                 return true;
             }
+            else if( a is LineSegment lineSegAndLineSegA && b is LineSegment lineSegAndLineSegB )
+            {
+                lineSegAndLineSegA.ClosestPoints( lineSegAndLineSegB, out closestA, out closestB );
+                return true;
+            }
+            else if( a is Ray lineAndRayA && b is Line lineAndRayB )
+            {
+                lineAndRayA.ClosestPoints( lineAndRayB, out closestA, out closestB );
+                return true;
+            }
+            else if( a is Ray pointAndRayA && b is Point pointAndRayB)
+            {   
+                pointAndRayA.ClosestPoints( pointAndRayB, out closestA, out closestB );
+                return true;
+            }
+            else if( a is Ray lineSegAndRayA && b is LineSegment lineSegAndRayB )
+            {
+                lineSegAndRayA.ClosestPoints( lineSegAndRayB, out closestA, out closestB );
+                return true;
+            }
+            else if( a is Ray rayAndRayA && b is Ray rayAndRayB )
+            {
+                rayAndRayA.ClosestPoints( rayAndRayB, out closestA, out closestB );
+                return true;
+            }
+
 
             closestA = closestB = Vector3.zero;
             return false;

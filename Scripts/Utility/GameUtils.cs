@@ -7,6 +7,7 @@ namespace MKit
 {
     public static class GameUtils
     {
+        private static readonly Vector3 ZERO = new Vector3( 0, 0, 0 );
 
         public static GameObject SpawnProjectile( GameObject prefab, Vector3 position, Vector3 velocity )
         {
@@ -17,7 +18,7 @@ namespace MKit
             return inst;
         }
 
-        private static readonly Vector3 ZERO = new Vector3( 0, 0, 0 );
+        
 
 
         #region INSTATIATION AND DESTRUCTION

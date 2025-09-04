@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEngine;
 
 namespace MKit.Math
 {
@@ -40,6 +41,15 @@ namespace MKit.Math
             return -( Mathf.Cos( Mathf.PI * t ) - 1 ) / 2f;
         }
 
+        public static float EaseInCirc( float x )
+        {
+            return 1 - Mathf.Sqrt( 1 - Mathf.Pow( x, 2 ) );
+        }
+
+        public static float EaseOutCirc( float x )
+        {
+            return 1f - EaseInCirc( x );
+        }
 
     }
 

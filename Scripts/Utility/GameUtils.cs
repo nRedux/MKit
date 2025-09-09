@@ -9,46 +9,62 @@ namespace MKit
     {
         private static readonly Vector3 ZERO = new Vector3( 0, 0, 0 );
 
-        public static GameObject SpawnProjectile( GameObject prefab, Vector3 position, Vector3 velocity )
+        public static GameObject SpawnProjectile( GameObject prefab, Vector3 position, Vector3 velocity, Transform parent = null )
         {
-            var inst = prefab.Duplicate( position, Quaternion.LookRotation( velocity, Vector3.up ) );
+            var inst = prefab.Duplicate( position, Quaternion.LookRotation( velocity, Vector3.up ), parent );
             var rb = inst.GetComponent<Rigidbody>();
             if( rb != null )
                 rb.AddForce( velocity, ForceMode.VelocityChange );
             return inst;
         }
 
-        
-
 
         #region INSTATIATION AND DESTRUCTION
 
-        public static T Duplicate<T>( this T unityObject ) where T : Object
+        public static T Duplicate<T>( this T unityObject, Transform parent = null ) where T : Object
         {
             if( unityObject == null )
                 return null;
 
             var inst = Object.Instantiate<T>( unityObject );
 
+            if( parent != null ) {
+                if( inst is GameObject go )
+                    go.transform.SetParent( parent );
+                else if( inst is Component comp )
+                    comp.transform.SetParent( parent );
+            }
             return inst;
         }
 
-        public static GameObject Duplicate( this GameObject unityObject, Vector3 position )
+        public static GameObject Duplicate( this GameObject unityObject, Vector3 position, Transform parent = null )
         {
             if( unityObject == null )
                 return null;
 
-            var inst = Object.Instantiate( unityObject, position, Quaternion.identity );
+            var inst = Object.Instantiate( unityObject, position, Quaternion.identity, parent );
 
             return inst;
         }
 
-        public static GameObject Duplicate( this GameObject unityObject, Vector3 position, Quaternion rotation )
+        public static GameObject Duplicate( this GameObject unityObject, Vector3 position, Quaternion rotation, Transform parent = null )
         {
             if( unityObject == null )
                 return null;
 
-            var inst = Object.Instantiate( unityObject, position, rotation );
+            var inst = Object.Instantiate( unityObject, position, rotation, parent );
+
+            return inst;
+        }
+
+
+        public static GameObject Duplicate( this GameObject unityObject, Transform parent = null )
+        {
+            if( unityObject == null )
+                return null;
+
+            var inst = Object.Instantiate( unityObject );
+            inst.transform.SetParent( parent );
 
             return inst;
         }
